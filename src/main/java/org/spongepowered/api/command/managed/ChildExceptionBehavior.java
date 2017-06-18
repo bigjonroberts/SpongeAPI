@@ -22,27 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.managed;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
-public class CommandMessageFormatting {
+import java.util.Optional;
 
-    private CommandMessageFormatting() {
-    }
+/**
+ * Defines the behavior when a child command throws a {@link CommandException}.
+ */
+@CatalogedBy(ChildExceptionBehaviors.class)
+public interface ChildExceptionBehavior extends CatalogType {
 
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Handles an exception from a child command.
+     *
+     * @param exception The exception to handle
+     * @return The {@link CommandException}, should it be stored
+     * @throws CommandException thrown if command execution should terminate
+     */
+    Optional<CommandException> onChildCommandError(CommandException exception) throws CommandException;
 
 }

@@ -22,27 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.parameter.token;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
-public class CommandMessageFormatting {
+import java.util.List;
 
-    private CommandMessageFormatting() {
-    }
+/**
+ * Provides a function to transform raw strings into tokens, which can be
+ * consumed by {@link Parameter}s.
+ */
+@CatalogedBy(InputTokenizers.class)
+public interface InputTokenizer extends CatalogType {
 
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Take the input string and split it as appropriate into argument tokens.
+     *
+     * @param arguments The provided arguments
+     * @param lenient Whether to parse leniently
+     * @return The tokenized strings. Empty list if error occurs
+     * @throws ArgumentParseException if an invalid input is provided
+     */
+    List<SingleArg> tokenize(String arguments, boolean lenient) throws ArgumentParseException;
 
 }

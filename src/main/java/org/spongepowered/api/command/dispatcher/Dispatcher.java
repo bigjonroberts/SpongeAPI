@@ -25,8 +25,10 @@
 package org.spongepowered.api.command.dispatcher;
 
 import com.google.common.collect.Multimap;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 
 import java.util.Optional;
@@ -37,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * Executes a command based on user input.
  */
-public interface Dispatcher extends CommandCallable {
+public interface Dispatcher extends Command {
 
     /**
      * Gets a list of commands. Each command, regardless of how many aliases it
@@ -120,4 +122,5 @@ public interface Dispatcher extends CommandCallable {
      * @return True if a mapping exists
      */
     boolean containsMapping(CommandMapping mapping);
+
 }

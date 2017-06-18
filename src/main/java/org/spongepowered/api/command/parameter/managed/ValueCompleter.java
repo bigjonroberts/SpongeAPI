@@ -22,27 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.parameter.managed;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.token.CommandArgs;
 
-public class CommandMessageFormatting {
+import java.util.List;
 
-    private CommandMessageFormatting() {
-    }
+/**
+ * Defines the completions for a parameter.
+ */
+@FunctionalInterface
+public interface ValueCompleter {
 
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Gets valid completions for a command.
+     *
+     * @param source The {@link CommandSource} completing the command
+     * @param args The {@link CommandArgs} that contain the unparsed arguments
+     * @param context The {@link CommandContext} that contains the parsed arguments
+     * @return The {@link List} of completions to display to the client
+     * @throws ArgumentParseException if a parameter could not be parsed
+     */
+    List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
 
 }

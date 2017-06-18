@@ -22,27 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.parameter.managed;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.token.CommandArgs;
 
-public class CommandMessageFormatting {
+import java.util.Optional;
 
-    private CommandMessageFormatting() {
-    }
+/**
+ * Defines how a parameter should be parsed.
+ */
+@FunctionalInterface
+public interface ValueParser {
 
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Gets the value for the parameter.
+     *
+     * <p>This should have no side effects, and should not update the {@link CommandContext}</p>.
+     *
+     * @param source The {@link CommandSource} that has executed this command
+     * @param args The {@link CommandArgs} that contains the unparsed arguments
+     * @param context The {@link CommandContext} containing the state about this command
+     * @return Returns the value, usually from {@link CommandArgs#next()}
+     * @throws ArgumentParseException if a parameter could not be parsed
+     */
+    Optional<?> getValue(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
 
 }

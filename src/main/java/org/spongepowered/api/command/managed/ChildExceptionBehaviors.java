@@ -22,44 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.managed;
 
-import java.util.Set;
+import org.spongepowered.api.command.Command;
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 /**
- * Provides information about a mapping between a command and its aliases.
- *
- * <p>Implementations are not required to implement a sane
- * {@link Object#equals(Object)} but may choose to do so.</p>
+ * The possible behaviors of a {@link Command} when a child command throws an
+ * exception.
  */
-public interface CommandMapping {
+public final class ChildExceptionBehaviors {
+
+    private ChildExceptionBehaviors() {}
+
+    // SORTFIELDS:ON
 
     /**
-     * Gets the primary alias.
-     *
-     * @return The primary alias
+     * If a child command throws an exception, rethrows it, preventing all
+     * further command execution. This is the default.
      */
-    String getPrimaryAlias();
+    public static final ChildExceptionBehavior RETHROW = DummyObjectProvider.createFor(ChildExceptionBehavior.class, "RETHROW");
 
     /**
-     * Gets an immutable list of all aliases.
-     *
-     * <p>The returned list must contain at least one entry, of which one must
-     * be the one returned by {@link #getPrimaryAlias()}.</p>
-     *
-     * <p>There may be several versions of the same alias with different
-     * casing, although generally implementations should ignore the casing
-     * of aliases.</p>
-     *
-     * @return A set of aliases
+     * If a child command throws an exception, stores it and continues with
+     * the parent command, displaying the error if the command execution ends
+     * due to an exception. Else, the exception will be swallowed.
      */
-    Set<String> getAllAliases();
+    public static final ChildExceptionBehavior STORE = DummyObjectProvider.createFor(ChildExceptionBehavior.class, "STORE");
 
     /**
-     * Gets the {@link Command} associated with this mapping.
-     *
-     * @return The {@link Command}
+     * If a child command throws an exception, suppresses it and executes the
+     * parent command.
      */
-    Command getCommand();
+    public static final ChildExceptionBehavior SUPPRESS = DummyObjectProvider.createFor(ChildExceptionBehavior.class, "SUPPRESS");
+
+    // SORTFIELDS:OFF
 
 }

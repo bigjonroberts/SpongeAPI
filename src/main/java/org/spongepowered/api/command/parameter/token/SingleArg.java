@@ -22,27 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.parameter.token;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+/**
+ * This represents a single argument with its start and end indexes
+ * in the associated raw input string.
+ */
+public interface SingleArg {
 
-public class CommandMessageFormatting {
+    /**
+     * Gets the argument value.
+     *
+     * @return The argument
+     */
+    String getArg();
 
-    private CommandMessageFormatting() {
-    }
+    /**
+     * Gets the index in the unparsed string that this argument starts at.
+     *
+     * @return The index.
+     */
+    int getStartIndex();
 
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Gets the index in the unparsed string that this argument ends at.
+     *
+     * @return The index
+     */
+    int getEndIndex();
 
 }

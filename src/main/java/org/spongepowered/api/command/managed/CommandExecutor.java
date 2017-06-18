@@ -22,27 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.managed;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.CommandContext;
 
-public class CommandMessageFormatting {
+/**
+ * Interface containing the method directing how a certain command will
+ * be executed.
+ */
+@FunctionalInterface
+public interface CommandExecutor {
 
-    private CommandMessageFormatting() {
-    }
-
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Callback for the execution of a command.
+     *
+     * @param source The {@link CommandSource} who is executing this command
+     * @param context The parsed command arguments for this command
+     * @return the result of executing this command
+     * @throws CommandException If a user-facing error occurs while
+     *     executing this command
+     */
+    CommandResult execute(CommandSource source, CommandContext context) throws CommandException;
 
 }

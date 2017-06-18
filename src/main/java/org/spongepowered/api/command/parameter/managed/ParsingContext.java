@@ -22,27 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command;
+package org.spongepowered.api.command.parameter.managed;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
 
-public class CommandMessageFormatting {
+/**
+ * Tracks the parsing of {@link ValueParameterModifier} and {@link ValueParameter}
+ * chains.
+ */
+public interface ParsingContext {
 
-    private CommandMessageFormatting() {
-    }
-
-    public static final Text FORWARD_SLASH = Text.of("/");
-    public static final Text COMMA_SPACE = Text.of(", ");
-    public static final Text LEFT_SQUARE = Text.of("[");
-    public static final Text RIGHT_SQUARE = Text.of("]");
-    public static final Text PIPE_TEXT = Text.of("|");
-    public static final Text SPACE_TEXT = Text.of(" ");
-    public static final Text STAR_TEXT = Text.of("*");
-    public static final Text LT_TEXT = Text.of("<");
-    public static final Text GT_TEXT = Text.of(">");
-    public static final Text ELLIPSIS_TEXT = Text.of("…");
-    public static final Text LEFT_PARENTHESIS = Text.of("(");
-    public static final Text RIGHT_PARENTHESIS = Text.of(")");
+    /**
+     * Parse the next {@link ValueParameterModifier} or {@link ValueParameter} in the
+     * chain.
+     *
+     * @throws ArgumentParseException if thrown by any {@link ValueParameterModifier}
+     *         or {@link ValueParameter} in the chain.
+     */
+    void next() throws ArgumentParseException;
 
 }
