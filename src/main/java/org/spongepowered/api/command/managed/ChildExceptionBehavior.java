@@ -30,6 +30,8 @@ import org.spongepowered.api.util.annotation.CatalogedBy;
 
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 /**
  * Defines the behavior when a child command throws a {@link CommandException}.
  */
@@ -39,10 +41,20 @@ public interface ChildExceptionBehavior extends CatalogType {
     /**
      * Handles an exception from a child command.
      *
+     * <p>An implementation can do one of the following:</p>
+     * <ul>
+     *     <li>Return {@code null} to discard the exception</li>
+     *     <li>Return the exception to inform the parent of the exception to
+     *     store it</li>
+     *     <li>(Re-)throw an exception to immediately terminate execution of
+     *     the current command</li>
+     * </ul>
+     *
      * @param exception The exception to handle
      * @return The {@link CommandException}, should it be stored
      * @throws CommandException thrown if command execution should terminate
      */
-    Optional<CommandException> onChildCommandError(CommandException exception) throws CommandException;
+    @Nullable
+    CommandException onChildCommandError(CommandException exception) throws CommandException;
 
 }

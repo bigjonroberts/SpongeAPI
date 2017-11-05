@@ -32,6 +32,7 @@ import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
+import org.spongepowered.api.text.Text;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public abstract class PatternMatchingValueParameter implements ValueParameter {
     protected abstract Object getValue(String choice) throws IllegalArgumentException;
 
     @Override
-    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
+    public Optional<?> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         final String unformattedPattern = args.next();
         return Optional.of(getValues(source, args, unformattedPattern));
@@ -99,9 +100,20 @@ public abstract class PatternMatchingValueParameter implements ValueParameter {
         Collection<Object> ret = StreamSupport.stream(filteredChoices.spliterator(), false).map(this::getValue).collect(Collectors.toList());
 
         if (!ret.iterator().hasNext()) {
-            throw args.createError(t("No values matching pattern '%s' present!", unformattedPattern));
+            throw args.createError(noChoicesError(unformattedPattern));
         }
         return ret;
+    }
+
+    /**
+     * Returns the error message to use when the supplied pattern does not match
+     * any of the choices on offer.
+     *
+     * @param unformattedPattern The pattern that did not match
+     * @return The error {@link Text} to print
+     */
+    protected Text noChoicesError(String unformattedPattern) {
+        return t("No values matching pattern '%s' present!", unformattedPattern);
     }
 
     protected Pattern getFormattedPattern(String input) {

@@ -135,14 +135,14 @@ public interface CommandArgs {
      *
      * @return The state.
      */
-    Snapshot getState();
+    State getState();
 
     /**
      * Uses a previous snapshot of the argument and restores it to that state.
      *
      * @param state The state obtained from {@link #getState()}
      */
-    void setState(Snapshot state);
+    void setState(State state);
 
     /**
      * Creates a {@link ArgumentParseException} based on the current state of
@@ -177,6 +177,6 @@ public interface CommandArgs {
      * <p>No assumptions should be made about the form of this state object,
      * it is not defined in the API and may change at any time.</p>
      */
-    interface Snapshot {}
+    interface State {}
 
 }

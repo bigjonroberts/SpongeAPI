@@ -24,67 +24,12 @@
  */
 package org.spongepowered.api.event.command;
 
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.event.Cancellable;
-import org.spongepowered.api.event.Event;
-
 /**
  * Fired when a command is sent.
+ *
+ * @deprecated Use {@link CommandExecutionEvent.Pre} instead, deprecated for
+ *      naming change
  */
-public interface SendCommandEvent extends Event, Cancellable {
-
-    /**
-     * Gets the command as a string, without any sort of command prefix.
-     *
-     * <p>For example, if the message was {@code /example bob 3 -f}, then
-     * the command would be {@code example}.</p>
-     *
-     * @return The command
-     */
-    String getCommand();
-
-    /**
-     * Sets the command as a string, without any sort of command prefix.
-     *
-     * <p>For example, if the message was {@code /example bob 3 -f}, then
-     * the command would be {@code example}.</p>
-     *
-     * @param command The command
-     */
-    void setCommand(String command);
-
-    /**
-     * Gets the arguments as a string.
-     *
-     * <p>For example, if the message was {@code /example bob 3 -f}, then
-     * the arguments would be {@code bob 3 -f}.</p>
-     *
-     * @return The arguments
-     */
-    String getArguments();
-
-    /**
-     * Sets the arguments as a string.
-     *
-     * <p>For example, if the message was {@code /example bob 3 -f}, then
-     * the arguments would be {@code bob 3 -f}.</p>
-     *
-     * @param arguments The arguments
-     */
-    void setArguments(String arguments);
-
-    /**
-     * The result of the command.
-     *
-     * @return The result of the command
-     */
-    CommandResult getResult();
-
-    /**
-     * Sets the result of the command.
-     *
-     * @param result The result of the command
-     */
-    void setResult(CommandResult result);
-
+@Deprecated
+public interface SendCommandEvent extends CommandExecutionEvent.Pre {
 }

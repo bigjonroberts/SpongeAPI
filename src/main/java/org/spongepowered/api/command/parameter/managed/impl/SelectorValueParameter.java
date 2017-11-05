@@ -57,7 +57,7 @@ public abstract class SelectorValueParameter extends PatternMatchingValueParamet
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
+    public Optional<?> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         String arg = args.peek();
         if (arg.startsWith("@")) { // Possibly a selector

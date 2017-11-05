@@ -129,6 +129,11 @@ public interface CommandContext {
     /**
      * Adds a parsed object into the context, for use by commands.
      *
+     * <p>If the object that is added to the context a {@link Collection}, it
+     * will be unwrapped and each entry will be added to the context
+     * individually. However, this does not recurse - collections can be added
+     * to the context by adding a collection containing a collection.</p>
+     *
      * @param key The key to store the entry under.
      * @param object The object to store.
      */
@@ -136,6 +141,11 @@ public interface CommandContext {
 
     /**
      * Adds a parsed object into the context, for use by commands.
+     *
+     * <p>If the object that is added to the context a {@link Collection}, it
+     * will be unwrapped and each entry will be added to the context
+     * individually. However, this does not recurse - collections can be added
+     * to the context by adding a collection containing a collection.</p>
      *
      * @param key The key to store the entry under.
      * @param object The object to store.
@@ -148,14 +158,14 @@ public interface CommandContext {
      *
      * @return The state.
      */
-    Snapshot getState();
+    State getState();
 
     /**
      * Uses a previous snapshot of the context and restores it to that state.
      *
      * @param state The state obtained from {@link #getState()}
      */
-    void setState(Snapshot state);
+    void setState(State state);
 
     /**
      * An immutable snapshot of a {@link CommandContext}.
@@ -163,6 +173,6 @@ public interface CommandContext {
      * <p>No assumptions should be made about the form of this state object,
      * it is not defined in the API and may change at any time.</p>
      */
-    interface Snapshot {}
+    interface State {}
 
 }

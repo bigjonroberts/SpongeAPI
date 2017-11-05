@@ -24,6 +24,7 @@
  */
 package org.spongepowered.api.command;
 
+import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.managed.ChildExceptionBehavior;
 import org.spongepowered.api.command.managed.ChildExceptionBehaviors;
@@ -31,6 +32,7 @@ import org.spongepowered.api.command.managed.CommandExecutor;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.flag.Flags;
 import org.spongepowered.api.command.parameter.token.InputTokenizer;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ResettableBuilder;
 import org.spongepowered.api.world.Location;
@@ -393,6 +395,65 @@ public interface Command {
          */
         Command build();
 
+        /**
+         * Builds this command, creating a {@link Command} object, and registers
+         * it with Sponge's {@link CommandManager}.
+         *
+         * <p>To build the command, <strong>one</strong> of the following is
+         * required:</p>
+         *
+         * <ul>
+         *     <li>A {@link CommandExecutor} is provided using
+         *     {@link #setExecutor(CommandExecutor)}</li>
+         *     <li>At least one {@link Command} is set to be a child command
+         *     using {@link #child(Command, Iterable)} or {@link #children(Map)}
+         *     </li>
+         * </ul>
+         *
+         * <p>If these conditions are not fulfilled, an
+         * {@link IllegalStateException} will be thrown.</p>
+         *
+         * @param pluginContainer The {@link PluginContainer} to register the
+         *      command under
+         * @param aliases The aliases to register for the command
+         * @return The {@link CommandMapping} with the registration, or an
+         *      empty optional if no valid aliases were registered
+         * @throws IllegalStateException if the builder is not complete
+         * @throws IllegalArgumentException if an invalid
+         *      {@link PluginContainer} is supplied
+         */
+        default Optional<CommandMapping> buildAndRegister(PluginContainer pluginContainer, String... aliases) {
+            return buildAndRegister(pluginContainer, Lists.newArrayList(aliases));
+        }
+
+        /**
+         * Builds this command, creating a {@link Command} object, and registers
+         * it with Sponge's {@link CommandManager}.
+         *
+         * <p>To build the command, <strong>one</strong> of the following is
+         * required:</p>
+         *
+         * <ul>
+         *     <li>A {@link CommandExecutor} is provided using
+         *     {@link #setExecutor(CommandExecutor)}</li>
+         *     <li>At least one {@link Command} is set to be a child command
+         *     using {@link #child(Command, Iterable)} or {@link #children(Map)}
+         *     </li>
+         * </ul>
+         *
+         * <p>If these conditions are not fulfilled, an
+         * {@link IllegalStateException} will be thrown.</p>
+         *
+         * @param pluginContainer The {@link PluginContainer} to register the
+         *      command under
+         * @param aliases The aliases to register for the command
+         * @return The {@link CommandMapping} with the registration, or an
+         *      empty optional if no valid aliases were registered
+         * @throws IllegalStateException if the builder is not complete
+         * @throws IllegalArgumentException if an invalid
+         *      {@link PluginContainer} is supplied
+         */
+        Optional<CommandMapping> buildAndRegister(PluginContainer pluginContainer, List<String> aliases);
     }
 
 }

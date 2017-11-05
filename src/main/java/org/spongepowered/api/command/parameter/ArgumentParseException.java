@@ -72,7 +72,7 @@ public class ArgumentParseException extends CommandException {
         } else if (superText == null) {
             return Text.of(getAnnotatedPosition());
         } else {
-            return Text.of(superText, '\n', getAnnotatedPosition());
+            return Text.of(superText, Text.NEW_LINE, getAnnotatedPosition());
         }
     }
 

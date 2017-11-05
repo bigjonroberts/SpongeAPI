@@ -22,33 +22,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command.parameter.managed;
-
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameter.ArgumentParseException;
-import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.token.CommandArgs;
-
-import java.util.Optional;
-
-/**
- * Defines how a parameter should be parsed.
- */
-@FunctionalInterface
-public interface ValueParser {
-
-    /**
-     * Gets the value for the parameter.
-     *
-     * <p>This should have no side effects on anything except on the state of
-     * the {@link CommandArgs}.</p>
-     *
-     * @param source The {@link CommandSource} that has executed this command
-     * @param args The {@link CommandArgs} that contains the unparsed arguments
-     * @param context The {@link CommandContext} containing the state about this command
-     * @return Returns the value, usually from {@link CommandArgs#next()}
-     * @throws ArgumentParseException if a parameter could not be parsed
-     */
-    Optional<?> getValue(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
-
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault package org.spongepowered.api.command.parameter.managed.standard;

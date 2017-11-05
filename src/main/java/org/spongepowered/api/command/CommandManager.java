@@ -121,8 +121,8 @@ public interface CommandManager extends Dispatcher {
      * @param aliases A list of aliases
      * @return The registered command mapping, unless no aliases could be
      *     registered
-     * @throws IllegalArgumentException Thrown if {@code plugin} is not a
-     *     plugin instance
+     * @throws IllegalArgumentException Thrown if the {@link PluginContainer}
+     *     is not valid.
      */
     Optional<CommandMapping> register(PluginContainer pluginContainer, Command command, List<String> aliases);
 
