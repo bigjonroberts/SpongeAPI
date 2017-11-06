@@ -27,6 +27,7 @@ package org.spongepowered.api.command.parameter;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.managed.SelectorParser;
 import org.spongepowered.api.command.parameter.managed.ValueCompleter;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.managed.ValueParameterModifier;
@@ -38,6 +39,7 @@ import org.spongepowered.api.command.parameter.managed.standard.VariableValuePar
 import org.spongepowered.api.command.parameter.managed.standard.VariableValueParameters;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ResettableBuilder;
 
@@ -145,82 +147,210 @@ public interface Parameter {
     // Convenience methods for getting the common parameter types - all in once place.
     // Modifiers (for the most part) are on the Parameter.Builder itself.
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#BOOLEAN}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder bool() {
         return Parameter.builder().setParser(CatalogedValueParameters.BOOLEAN);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#DIMENSION}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder dimension() {
         return Parameter.builder().setParser(CatalogedValueParameters.DIMENSION);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#DURATION}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder duration() {
         return Parameter.builder().setParser(CatalogedValueParameters.DURATION);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#DOUBLE}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder doubleNumber() {
         return Parameter.builder().setParser(CatalogedValueParameters.DOUBLE);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#ENTITY}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder entity() {
         return Parameter.builder().setParser(CatalogedValueParameters.ENTITY);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#ENTITY}, with the
+     * {@link CatalogedValueParameterModifiers#OR_ENTITY_SOURCE} modifier.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder entityOrSource() {
         return entity().modifier(CatalogedValueParameterModifiers.OR_ENTITY_SOURCE);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#INTEGER}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder integerNumber() {
         return Parameter.builder().setParser(CatalogedValueParameters.INTEGER);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#LOCATION}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder location() {
         return Parameter.builder().setParser(CatalogedValueParameters.LOCATION);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#LONG}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder longNumber() {
         return Parameter.builder().setParser(CatalogedValueParameters.LONG);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#PLAYER}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder player() {
         return Parameter.builder().setParser(CatalogedValueParameters.PLAYER);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#PLAYER}, with the
+     * {@link CatalogedValueParameterModifiers#OR_PLAYER_SOURCE} modifier.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder playerOrSource() {
         return player().modifier(CatalogedValueParameterModifiers.OR_PLAYER_SOURCE);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#PLUGIN}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder plugin() {
         return Parameter.builder().setParser(CatalogedValueParameters.PLUGIN);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#REMAINING_JOINED_STRINGS}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder remainingJoinedStrings() {
         return Parameter.builder().setParser(CatalogedValueParameters.REMAINING_JOINED_STRINGS);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#REMAINING_RAW_JOINED_STRINGS}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder remainingRawJoinedStrings() {
         return Parameter.builder().setParser(CatalogedValueParameters.REMAINING_RAW_JOINED_STRINGS);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#STRING}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder string() {
         return Parameter.builder().setParser(CatalogedValueParameters.STRING);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#USER}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder user() {
         return Parameter.builder().setParser(CatalogedValueParameters.USER);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#ENTITY}, with the
+     * {@link CatalogedValueParameterModifiers#OR_PLAYER_SOURCE} modifier.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder userOrSource() {
         return user().modifier(CatalogedValueParameterModifiers.OR_PLAYER_SOURCE);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#VECTOR3D}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder vector3d() {
         return Parameter.builder().setParser(CatalogedValueParameters.VECTOR3D);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} set to
+     * {@link CatalogedValueParameters#WORLD_PROPERTIES}.
+     *
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder worldProperties() {
         return Parameter.builder().setParser(CatalogedValueParameters.WORLD_PROPERTIES);
     }
 
+    /**
+     * Creates a builder that has the {@link ValueParameter} that allows you to
+     * choose from cataloged types.
+     *
+     * <p>The parameter will be set to allow users to omit the "minecraft:" or
+     * "sponge:" namespace.</p>
+     *
+     * @param type The {@link CatalogType} class to check for choices
+     * @param <T> The type of {@link CatalogType}
+     * @return A {@link Parameter.Builder}
+     */
     static <T extends CatalogType> Parameter.Builder catalogedElement(Class<T> type) {
         return Parameter.builder().setParser(VariableValueParameters.catalogedElementParameterBuilder().setCatalogedType(type)
                 .prefix("minecraft")
@@ -228,6 +358,13 @@ public interface Parameter {
                 .build());
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that allows you to
+     * specify a set of choices that must be chosen from
+     *
+     * @param choices The choices
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder choices(String... choices) {
         VariableValueParameters.StaticChoicesBuilder builder = VariableValueParameters.staticChoicesBuilder().setShowInUsage(true);
         for (String choice : choices) {
@@ -237,24 +374,71 @@ public interface Parameter {
         return Parameter.builder().setParser(builder.build());
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that allows you to
+     * specify a set of choices that must be chosen from. These choices map to
+     * objects that will get put in the {@link CommandContext} when a choice is
+     * selected.
+     *
+     * @param choices The choices
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder choices(Map<String, ?> choices) {
         return Parameter.builder().setParser(VariableValueParameters.staticChoicesBuilder().choices(choices).setShowInUsage(true).build());
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that allows you to
+     * specify a set of choices that must be chosen from. These choices map to
+     * objects that will get put in the {@link CommandContext} when a choice is
+     * selected, through the use of the {@code valueFunction}.
+     *
+     * @param choices The choices
+     * @param valueFunction The function that returns an object to put in the
+     *      {@link CommandContext} based on the supplied choice
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder choices(Supplier<Iterable<String>> choices, Function<String, ?> valueFunction) {
         return Parameter.builder().setParser(
                 VariableValueParameters.dynamicChoicesBuilder().setShowInUsage(true).setChoices(choices).setResults(valueFunction).build());
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that requires an
+     * argument that matches the name of a supplied {@link Enum} type
+     *
+     * @param enumClass The {@link Enum} class type
+     * @param <T> The type of {@link Enum}
+     * @return A {@link Parameter.Builder}
+     */
     static <T extends Enum<T>> Parameter.Builder enumValue(Class<T> enumClass) {
         return Parameter.builder().setParser(VariableValueParameters.enumBuilder().setEnumClass(enumClass).build());
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that requires an
+     * argument to be a literal specified
+     *
+     * @param returnedValue The object to put in the {@link CommandContext} if
+     *      the literal matches
+     * @param literal The literal to match
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder literal(Object returnedValue, String... literal) {
         Iterable<String> iterable = Arrays.asList(literal);
         return literal(returnedValue, () -> iterable);
     }
 
+    /**
+     * Creates a builder that has a {@link ValueParameter} that requires an
+     * argument to be a literal specified
+     *
+     * @param returnedValue The object to put in the {@link CommandContext} if
+     *      the literal matches
+     * @param literalSupplier A function that provies the literal to match at
+     *      invocation
+     * @return A {@link Parameter.Builder}
+     */
     static Parameter.Builder literal(Object returnedValue, Supplier<Iterable<String>> literalSupplier) {
         return Parameter.builder()
                 .setParser(VariableValueParameters.literalBuilder().setReturnValue(returnedValue).setLiteral(literalSupplier).build());
@@ -263,37 +447,37 @@ public interface Parameter {
     /**
      * Parses the next element(s) in the {@link CommandContext}
      *
-     * @param source The {@link CommandSource} executing this command.
+     * @param cause The {@link Cause} requesting execution of this command
      * @param args The {@link CommandArgs} containing the strings that need
      *             to be parsed
      * @param context The {@link CommandContext} that contains the
-     *                current state of the execution.
+     *                current state of the execution
      * @throws ArgumentParseException thrown if the parameter could not be
-     *                                 parsed
+     *      parsed
      */
-    void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
+    void parse(Cause cause, CommandArgs args, CommandContext context) throws ArgumentParseException;
 
     /**
      * Returns potential completions of the current tokenized argument.
      *
-     * @param source The {@link CommandSource} executing this command.
+     * @param cause The {@link Cause} requesting execution of this command
      * @param args The {@link CommandArgs} containing the strings that need
      *             to be parsed
      * @param context The {@link CommandContext} that contains the
      *                current state of the execution.
      * @return The potential completions.
      * @throws ArgumentParseException thrown if the parameter could not be
-     *                                 parsed
+     *      parsed
      */
-    List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
+    List<String> complete(Cause cause, CommandArgs args, CommandContext context) throws ArgumentParseException;
 
     /**
      * Gets the usage of this parameter.
      *
-     * @param source The {@link CommandSource} that requested the usage
+     * @param cause The {@link Cause} that requested the usage
      * @return The usage
      */
-    Text getUsage(CommandSource source);
+    Text getUsage(Cause cause);
 
     /**
      * Builds a {@link Parameter} from constituent components.
@@ -416,6 +600,19 @@ public interface Parameter {
         }
 
         /**
+         * Sets the {@link SelectorParser} that is used to parse a selector if
+         * one is provided.
+         *
+         * <p>This will <em>replace</em> any selector parser that may be on any
+         * supplied {@link ValueParameter}. Set this to {@code null} to define
+         * the default for the parameter</p>
+         *
+         * @param selectorParser The parser
+         * @return This builder, for chaining
+         */
+        Builder setSelectorParser(@Nullable SelectorParser selectorParser);
+
+        /**
          * Sets the permission that the executing {@link CommandSource} is
          * required to have in order for this parameter to be parsed.
          *
@@ -441,7 +638,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder onlyOne() {
-            return modifiers(CatalogedValueParameterModifiers.ONLY_ONE);
+            return modifier(CatalogedValueParameterModifiers.ONLY_ONE);
         }
 
         /**
@@ -451,7 +648,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder allOf() {
-            return modifiers(CatalogedValueParameterModifiers.ALL_OF);
+            return modifier(CatalogedValueParameterModifiers.ALL_OF);
         }
 
         /**
@@ -464,7 +661,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder optional() {
-            return modifiers(CatalogedValueParameterModifiers.OPTIONAL);
+            return modifier(CatalogedValueParameterModifiers.OPTIONAL);
         }
 
         /**
@@ -477,7 +674,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder optionalWeak() {
-            return modifiers(CatalogedValueParameterModifiers.OPTIONAL_WEAK);
+            return modifier(CatalogedValueParameterModifiers.OPTIONAL_WEAK);
         }
 
         /**
@@ -494,7 +691,7 @@ public interface Parameter {
          */
         default Builder optionalOrDefault(Object defaultValue) {
             Optional<?> result = Optional.of(defaultValue);
-            return optionalOrDefault(source -> result);
+            return optionalOrDefault(cause -> result);
         }
 
         /**
@@ -508,7 +705,7 @@ public interface Parameter {
          * parser will attempt to parse the argument this element couldn't
          * parse using the next parser in the chain.</p>
          *
-         * <p>This should not be used in conjuction with other optional
+         * <p>This should not be used in conjunction with other optional
          * modifiers.</p>
          *
          * @param defaultValueSupplier A {@link Supplier} that returns an object
@@ -520,7 +717,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder optionalOrDefault(Supplier<?> defaultValueSupplier) {
-            return optionalOrDefault(source -> Optional.ofNullable(defaultValueSupplier.get()));
+            return optionalOrDefault(cause -> Optional.ofNullable(defaultValueSupplier.get()));
         }
 
         /**
@@ -545,7 +742,7 @@ public interface Parameter {
          *                             if the parameter is not optional.
          * @return This builder, for chaining
          */
-        default Builder optionalOrDefault(Function<CommandSource, Optional<?>> defaultValueFunction) {
+        default Builder optionalOrDefault(Function<Cause, Optional<?>> defaultValueFunction) {
             return modifier(VariableValueParameterModifiers.defaultValueModifierBuilder().setDefaultValueFunction(defaultValueFunction).build());
         }
 
@@ -556,42 +753,7 @@ public interface Parameter {
          * @return This builder, for chaining
          */
         default Builder repeated(int times) {
-            return modifiers(VariableValueParameterModifiers.repeatedValueModifierBuilder().setNumberOfTimes(times).build());
-        }
-
-        /**
-         * Specifies that the parameter could be satisfied by entities returned from
-         * a selector instead.
-         *
-         * <p>If onlyOne is false, then developers <strong>must</strong> account for
-         * the fact that more than one entity can be returned. If this is true, then
-         * the parameter will throw an exception if more than one entity is returned
-         * </p>
-         *
-         * <p>In-built parameter types where it makes sense to support selectors
-         * (such as {@link CatalogedValueParameters#PLAYER} do not need this
-         * modifier as they will already check selectors.
-         * </p>
-         *
-         * <p>If a selector is detected, the associated {@link ValueParameter}
-         * will not run.</p>
-         *
-         * @param entityType The type of {@link Entity} that can be returned by
-         *                   the selector
-         * @param onlyOne    Whether only one entity should be returned
-         * @param strict     If true, the parser will fail if an entity that is
-         *                   not of the provided type, else it will just remove
-         *                   any non-conforming entities
-         * @return This builder, for chaining
-         */
-        default Builder supportSelectors(Class<? extends Entity> entityType, boolean onlyOne, boolean strict) {
-            return modifiers(
-                    VariableValueParameterModifiers
-                            .selectorValueModifierBuilder()
-                            .entityType(entityType)
-                            .setExpectOne(onlyOne)
-                            .setStrict(strict)
-                            .build());
+            return modifier(VariableValueParameterModifiers.repeatedValueModifierBuilder().setNumberOfTimes(times).build());
         }
 
         /**

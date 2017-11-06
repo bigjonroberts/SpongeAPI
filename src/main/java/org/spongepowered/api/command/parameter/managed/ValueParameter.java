@@ -24,23 +24,26 @@
  */
 package org.spongepowered.api.command.parameter.managed;
 
-import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
-public interface ValueParameter extends ValueCompleter, ValueParser, ValueUsage {
+import java.util.Optional;
+import java.util.function.Function;
 
-    /**
-     * Gets the usage string for the argument.
-     *
-     * <p>Default implemented to simply return the key.</p>
-     *
-     * @param key The {@link Text} that defines the parameter key
-     * @param source The source requesting the usage
-     * @return The usage
-     */
-    default Text getUsage(Text key, CommandSource source) {
+public interface ValueParameter extends ValueCompleter, ValueParser, ValueUsage, SelectorParser {
+
+    @Override
+    default Text getUsage(Text key, Cause cause) {
         return key;
+    }
+
+    @Override
+    default Optional<?> parseSelector(Cause cause, String selector, CommandContext context, Function<Text, ArgumentParseException> errorFunction)
+            throws ArgumentParseException {
+        return Optional.empty();
     }
 
     /**

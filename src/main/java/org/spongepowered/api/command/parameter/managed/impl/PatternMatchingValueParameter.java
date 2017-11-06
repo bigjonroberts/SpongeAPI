@@ -32,6 +32,7 @@ import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
 import java.util.Collection;
@@ -48,8 +49,8 @@ import java.util.stream.StreamSupport;
 public abstract class PatternMatchingValueParameter implements ValueParameter {
 
     @Override
-    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
-        Iterable<String> choices = getChoices(source);
+    public List<String> complete(Cause cause, CommandArgs args, CommandContext context) throws ArgumentParseException {
+        Iterable<String> choices = getChoices(cause);
         final Optional<String> nextArg = args.nextIfPresent();
         if (nextArg.isPresent()) {
             choices = StreamSupport.stream(choices.spliterator(), false)
@@ -61,36 +62,36 @@ public abstract class PatternMatchingValueParameter implements ValueParameter {
 
     /**
      * Gets the value for a given choice. For any result in
-     * {@link #getChoices(CommandSource)}, this must return a non-null value.
+     * {@link #getChoices(Cause)}, this must return a non-null value.
      * Otherwise, an {@link IllegalArgumentException} may be thrown.
      *
      * @param choice The specified choice
      * @return the choice's value
      * @throws IllegalArgumentException if the input string is not any return
-     *         value of {@link #getChoices(CommandSource)}
+     *         value of {@link #getChoices(Cause)}
      */
     protected abstract Object getValue(String choice) throws IllegalArgumentException;
 
     @Override
-    public Optional<?> getValue(CommandSource source, CommandArgs args, CommandContext context)
+    public Optional<?> getValue(Cause cause, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         final String unformattedPattern = args.next();
-        return Optional.of(getValues(source, args, unformattedPattern));
+        return Optional.of(getValues(cause, args, unformattedPattern));
     }
 
     /**
      * Gets the value(s) for this parameter, based on the passed argument.
      *
-     * @param source The {@link CommandSource}
+     * @param cause The {@link Cause}
      * @param args The {@link CommandArgs}
      * @param unformattedPattern The pattern to parse
      * @return A {@link Collection} of {@link Object}s to put into the context
      * @throws ArgumentParseException if parsing was unsuccessful
      */
-    public final Collection<Object> getValues(CommandSource source, CommandArgs args, String unformattedPattern) throws ArgumentParseException {
+    public final Collection<Object> getValues(Cause cause, CommandArgs args, String unformattedPattern) throws ArgumentParseException {
         Pattern pattern = getFormattedPattern(unformattedPattern);
         Iterable<String> filteredChoices =
-                StreamSupport.stream(getChoices(source).spliterator(), false).filter(element -> pattern.matcher(element).find())
+                StreamSupport.stream(getChoices(cause).spliterator(), false).filter(element -> pattern.matcher(element).find())
                         .collect(Collectors.toList());
         for (String el : filteredChoices) { // Match a single value
             if (el.equalsIgnoreCase(unformattedPattern)) {
@@ -125,11 +126,11 @@ public abstract class PatternMatchingValueParameter implements ValueParameter {
     }
 
     /**
-     * Gets the available choices for this command source.
+     * Gets the available choices for this invocation.
      *
-     * @param source The source requesting choices
+     * @param cause The {@link Cause} requesting choices
      * @return the possible choices
      */
-    protected abstract Iterable<String> getChoices(CommandSource source);
+    protected abstract Iterable<String> getChoices(Cause cause);
 
 }

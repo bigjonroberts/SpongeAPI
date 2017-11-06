@@ -26,10 +26,9 @@ package org.spongepowered.api.command.dispatcher;
 
 import com.google.common.collect.Multimap;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
-import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.Optional;
 import java.util.Set;
@@ -85,10 +84,10 @@ public interface Dispatcher extends Command {
      * the given alias.
      *
      * @param alias The alias to look up
-     * @param source The source this alias is being looked up for
+     * @param cause The {@link Cause} this alias is being looked up for, if any
      * @return The command mapping, if available
      */
-    Optional<? extends CommandMapping> get(String alias, @Nullable CommandSource source);
+    Optional<? extends CommandMapping> get(String alias, @Nullable Cause cause);
 
     /**
      * Gets all the {@link CommandMapping}s associated with an alias.

@@ -22,25 +22,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command.parameter.managed;
+package org.spongepowered.api.command;
 
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.event.cause.Cause;
+import static org.spongepowered.api.util.SpongeApiTranslationHelper.t;
+
 import org.spongepowered.api.text.Text;
 
 /**
- * Defines how a parameter should be parsed.
+ * This exception is thrown when the target {@link CommandSource}s is of the
+ * correct type to call the target command.
  */
-@FunctionalInterface
-public interface ValueUsage {
+public class IncorrectCommandSourceException extends CommandException {
+    private static final long serialVersionUID = -2927330349931825821L;
 
     /**
-     * Gets the usage string for the argument.
-     *
-     * @param key The {@link Text} that defines the parameter key
-     * @param cause The {@link Cause} requesting the usage
-     * @return The usage
+     * Create an exception with the default message.
      */
-    Text getUsage(Text key, Cause cause);
+    public IncorrectCommandSourceException() {
+        this(t("You cannot execute this command!"));
+    }
 
+    /**
+     * Create a permissions exception with a custom message.
+     *
+     * @param message The message
+     */
+    public IncorrectCommandSourceException(Text message) {
+        super(message);
+    }
+
+    /**
+     * Create a permissions exception with a custom message and cause.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
+    public IncorrectCommandSourceException(Text message, Throwable cause) {
+        super(message, cause);
+    }
 }

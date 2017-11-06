@@ -24,7 +24,11 @@
  */
 package org.spongepowered.api.command.parameter;
 
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -38,11 +42,55 @@ import java.util.Optional;
  */
 public interface CommandContext {
 
+    // TODO: Better descriptions
+    /**
+     * Gets the {@link CommandSource} that this command acts as if it was
+     * requested by
+     *
+     * @return The {@link CommandSource}
+     */
+    Optional<CommandSource> getCommandSource();
+
+    /**
+     * Gets the {@link Entity} that this command originated from.
+     *
+     * @return The {@link Entity}
+     */
+    Optional<Entity> getEntityTarget();
+
+    /**
+     * Gets the {@link Subject} that permission checks should be performed upon,
+     * if any.
+     *
+     * @return The {@link Subject}
+     */
+    Optional<Subject> getSubject();
+
+    /**
+     * Gets the {@link Location} that this command is associated with.
+     *
+     * <p>If not explicit location is set, the following are checked in order:
+     *
+     * <ul>
+     *     <li>{@link #getTargetBlock()}</li>
+     *     <li>the location of {@link #getEntityTarget()}</li>
+     *     <li>the location of {@link #getCommandSource()} if a
+     *     {@link Locatable}</li>
+     * </ul>
+     *
+     * @return The {@link Location}, if it exists
+     */
+    Optional<Location<World>> getLocation();
+
     /**
      * Returns the target block {@link Location}, if applicable.
      *
+     * <p>This is different to {@link #getLocation()}, in that it is not
+     * associated with the cause</p>
+     *
      * @return The {@link Location} if applicable, or an empty optional.
      */
+    // TODO: Check this - is this needed?
     Optional<Location<World>> getTargetBlock();
 
     /**

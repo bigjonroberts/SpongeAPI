@@ -22,25 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command.parameter.managed;
+package org.spongepowered.api.command.managed;
 
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.text.Text;
 
 /**
- * Defines how a parameter should be parsed.
+ * Provides the logic for a command that checks to see if
+ * {@link CommandContext#getCommandSource()} is of the correct type.
  */
 @FunctionalInterface
-public interface ValueUsage {
+public interface TargetedCommandExecutor<T extends CommandSource> {
 
     /**
-     * Gets the usage string for the argument.
+     * Callback for the execution of a command.
      *
-     * @param key The {@link Text} that defines the parameter key
-     * @param cause The {@link Cause} requesting the usage
-     * @return The usage
+     * @param cause The {@link Cause} of the command
+     * @param source The {@link CommandSource} executing the command
+     * @param context The parsed command arguments for this command
+     * @return the result of executing this command
+     * @throws CommandException If a user-facing error occurs while
+     *     executing this command
      */
-    Text getUsage(Text key, Cause cause);
+    CommandResult execute(Cause cause, T source, CommandContext context) throws CommandException;
 
 }

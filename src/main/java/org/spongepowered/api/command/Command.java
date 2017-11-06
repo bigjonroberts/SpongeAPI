@@ -25,16 +25,27 @@
 package org.spongepowered.api.command;
 
 import com.google.common.collect.Lists;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.managed.ChildExceptionBehavior;
 import org.spongepowered.api.command.managed.ChildExceptionBehaviors;
 import org.spongepowered.api.command.managed.CommandExecutor;
+import org.spongepowered.api.command.managed.TargetedCommandExecutor;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.flag.Flags;
 import org.spongepowered.api.command.parameter.token.InputTokenizer;
+import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.event.CauseStackManager;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKey;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ResettableBuilder;
+import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -59,6 +70,38 @@ import javax.annotation.Nullable;
  * <p>Plugins are free to implement this interface should they prefer to do so.
  * Custom implementations of this class are not required to implement a sane
  * {@link Object#equals(Object)}, but are highly encouraged to do so.</p>
+ *
+ * <p>Commands in Sponge are provided with a {@link Cause}, rather than a direct
+ * source. The cause may contain contexts that provide information about what
+ * they should act upon:</p>
+ *
+ * <ul>
+ *     <li>{@link EventContextKeys#COMMAND_SOURCE}, which may contain a
+ *     traditional {@link CommandSource} to act upon</li>
+ *     <li>{@link EventContextKeys#COMMAND_PERMISSION_SUBJECT}, which may contain
+ *     a {@link Subject} where permission checks should be drawn from</li>
+ *     <li>{@link EventContextKeys#COMMAND_ENTITY}, which may contain an
+ *     {@link Entity} that either has requested the command, or which the
+ *     command should be centered around</li>
+ *     <li>{@link EventContextKeys#COMMAND_LOCATION}, which may contain a
+ *     {@link Location} to make a command location aware.</li>
+ * </ul>
+ *
+ * <p>Should a plugin wish to work with a traditional {@link CommandSource},
+ * they should first look for the {@link EventContextKeys#COMMAND_SOURCE} in the
+ * {@link Cause} {@link EventContext}, if that doesn't exist, then look for the
+ * first {@link CommandSource}. Should no {@link CommandSource} exist within the
+ * {@link Cause}, commands are advised to use {@link Server#getConsole()} as
+ * their {@link CommandSource}.</p>
+ *
+ * <p>Plugins performing permission checks are strongly advised to use any
+ * {@link Subject} associated with the
+ * {@link EventContextKeys#COMMAND_PERMISSION_SUBJECT} key for such checks if it
+ * exists, falling back to the {@link CommandSource} (as above) or the first
+ * {@link Subject} in the {@link Cause}.</p>
+ *
+ * <p>However, implementations are free to ignore these contexts, and may act
+ * upon the {@link Cause} alone as they see fit, should it be preferred.</p>
  */
 public interface Command {
 
@@ -71,18 +114,79 @@ public interface Command {
         return Sponge.getRegistry().createBuilder(Builder.class);
     }
 
+    // TODO: Move these to impl or some util class. For testing for now
+    static Optional<Entity> getEntityFromCause(Cause cause) {
+        EventContext eventContext = cause.getContext();
+        Optional<Entity> oe = eventContext.get(EventContextKeys.COMMAND_ENTITY);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        oe = eventContext.get(EventContextKeys.COMMAND_SOURCE).map(x -> x instanceof Entity ? (Entity) x : null);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        return cause.first(Entity.class);
+    }
+
+    static Optional<Location<World>> getLocationFromCause(Cause cause) {
+        EventContext eventContext = cause.getContext();
+        Optional<Location<World>> oe = eventContext.get(EventContextKeys.COMMAND_LOCATION);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        oe = eventContext.get(EventContextKeys.COMMAND_SOURCE).map(x -> x instanceof Locatable ? ((Locatable) x).getLocation() : null);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        oe = eventContext.get(EventContextKeys.COMMAND_ENTITY).map(Locatable::getLocation);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        return cause.first(Locatable.class).map(Locatable::getLocation);
+    }
+
+    static Optional<CommandSource> getCommandSourceFromCause(Cause cause) {
+        EventContext eventContext = cause.getContext();
+        Optional<CommandSource> oe = eventContext.get(EventContextKeys.COMMAND_SOURCE);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        return cause.first(CommandSource.class);
+    }
+
+    static Optional<Subject> getSubjectFromCause(Cause cause) {
+        EventContext eventContext = cause.getContext();
+        Optional<Subject> oe = eventContext.get(EventContextKeys.COMMAND_PERMISSION_SUBJECT);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        oe = getCommandSourceFromCause(cause).map(x -> (Subject) x);
+        if (oe.isPresent()) {
+            return oe;
+        }
+
+        return cause.first(Subject.class);
+    }
+
     /**
      * Execute the command based on input arguments.
      *
      * <p>The implementing class must perform the necessary permission
      * checks.</p>
      *
-     * @param source The caller of the command
+     * @param cause The {@link Cause} of the command
      * @param arguments The raw arguments for this command
      * @return The result of a command being processed
      * @throws CommandException Thrown on a command error
      */
-    CommandResult process(CommandSource source, String arguments) throws CommandException;
+    CommandResult process(Cause cause, String arguments) throws CommandException;
 
     /**
      * Gets a list of suggestions based on input.
@@ -90,37 +194,38 @@ public interface Command {
      * <p>If a suggestion is chosen by the user, it will replace the last
      * word.</p>
      *
-     * @param source The command source
+     * @param cause The {@link Cause}
      * @param arguments The arguments entered up to this point
      * @param targetPosition The position the source is looking at when
      *     performing tab completion
      * @return A list of suggestions
      * @throws CommandException Thrown if there was a parsing error
      */
-    List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException;
+    List<String> getSuggestions(Cause cause, String arguments, @Nullable Location<World> targetPosition) throws CommandException;
 
     /**
-     * Test whether this command can probably be executed by the given source.
+     * Test whether this command can probably be executed given this
+     * {@link Cause}.
      *
      * <p>If implementations are unsure if the command can be executed by
      * the source, {@code true} should be returned. Return values of this method
      * may be used to determine whether this command is listed in command
      * listings.</p>
      *
-     * @param source The caller of the command
+     * @param cause The {@link Cause} to check
      * @return Whether permission is (probably) granted
      */
-    boolean testPermission(CommandSource source);
+    boolean testPermission(Cause cause);
 
     /**
      * Gets a short one-line description of this command.
      *
      * <p>The help system may display the description in the command list.</p>
      *
-     * @param source The source of the help request
+     * @param cause The {@link Cause} of the help request
      * @return A description
      */
-    Optional<Text> getShortDescription(CommandSource source);
+    Optional<Text> getShortDescription(Cause cause);
 
     /**
      * Gets a longer formatted help message about this command.
@@ -134,10 +239,10 @@ public interface Command {
      * <p>The help system may display this message when a source requests
      * detailed information about a command.</p>
      *
-     * @param source The source of the help request
+     * @param cause The {@link Cause} of the help request
      * @return A help text
      */
-    Optional<Text> getHelp(CommandSource source);
+    Optional<Text> getHelp(Cause cause);
 
     /**
      * Gets the usage string of this command.
@@ -147,11 +252,10 @@ public interface Command {
      *
      * <p>The string must not contain the command alias.</p>
      *
-     * @param source The source of the help request
+     * @param cause The {@link Cause} of the help request
      * @return A usage string
      */
-    Text getUsage(CommandSource source);
-
+    Text getUsage(Cause cause);
 
     /**
      * A high level {@link Builder} for creating a {@link Command}.
@@ -260,7 +364,8 @@ public interface Command {
         /**
          * Provides the logic of the command.
          *
-         * <p>This is only optional if child commands are specified.</p>
+         * <p>This is only optional if child commands are specified. This will
+         * replace any previous executor that has been set.</p>
          *
          * @param executor The {@link CommandExecutor} that will run the command
          * @return This builder, for chaining
@@ -268,18 +373,62 @@ public interface Command {
         Builder setExecutor(CommandExecutor executor);
 
         /**
+         * Provides the logic of the command, providing easy access to the
+         * {@link CommandSource} from the {@link Cause}.
+         *
+         * <p>This is only optional if child commands are specified. This will
+         * replace any previous executor that has been set.</p>
+         *
+         * @param executor The {@link CommandExecutor} that will run the command
+         * @return This builder, for chaining
+         */
+        Builder setExecutor(TargetedCommandExecutor<CommandSource> executor);
+
+        /**
+         * Provides the logic of the command, filtering commands based on the
+         * type of {@link CommandSource} executing the .
+         *
+         * <p>Unlike the setExecutor methods, this will chain multiple executors.
+         * Note the following:</p>
+         *
+         * <ul>
+         *     <li>The first call to this will remove any set executors</li>
+         *     <li>Subsequent calls will add executors</li>
+         *     <li>When a command is called, executors will be checked in the
+         *     order they are provided and the first to match will run</li>
+         *     <li>Any call to {@link #setExecutor(CommandExecutor)} or
+         *     {@link #setExecutor(TargetedCommandExecutor)} will remove these
+         *     executors, and the next call to this will be treated as the first
+         *     call.</li>
+         * </ul>
+         *
+         * @param executor The {@link CommandExecutor} that will run the command
+         * @return This builder, for chaining
+         */
+        <T extends CommandSource> Builder targetedExecutor(TargetedCommandExecutor<T> executor, Class<T> sourceType);
+
+        /**
+         * If using {@link #targetedExecutor(TargetedCommandExecutor, Class)} to
+         * build up a set of executors, this provides the message to return if no
+         * {@link TargetedCommandExecutor}s match when the command is run.
+         *
+         * @param targetedExecutorError The error {@link Text}
+         * @return This builder, for chaining
+         */
+        Builder setTargetedExecutorErrorMessage(Text targetedExecutorError);
+
+        /**
          * Provides the description for this command, which is dependent on the
-         * {@link CommandSource} that requests it.
+         * {@link Cause} that requests it.
          *
          * <p>A one line summary should be provided to
          * {@link #setShortDescription(Text)}</p>
          *
          * @param extendedDescriptionFunction A function that provides a
-         *                                    relevant description based on the
-         *                                    supplied {@link CommandSource}
+         *      relevant description based on the supplied {@link Cause}
          * @return This builder, for chaining
          */
-        Builder setExtendedDescription(Function<CommandSource, Optional<Text>> extendedDescriptionFunction);
+        Builder setExtendedDescription(Function<Cause, Optional<Text>> extendedDescriptionFunction);
 
         /**
          * Provides the description for this command.
@@ -294,7 +443,7 @@ public interface Command {
         default Builder setExtendedDescription(@Nullable Text extendedDescription) {
             // Done outside the lambda so that we don't have to recreate the object each time.
             Optional<Text> text = Optional.ofNullable(extendedDescription);
-            return setExtendedDescription(commandSource -> text);
+            return setExtendedDescription(cause -> text);
         }
 
         /**
@@ -318,18 +467,17 @@ public interface Command {
 
         /**
          * Provides a simple description for this command, typically no more
-         * than one line, which is dependent on the {@link CommandSource} that
+         * than one line, which is dependent on the {@link Cause} that
          * requests it.
          *
          * <p>Fuller descriptions should be provided through
          * {@link #setExtendedDescription(Text)}</p>
          *
          * @param descriptionFunction A function that provides a relevant
-         *                            description based on the supplied
-         *                            {@link CommandSource}
+         *      description based on the supplied {@link Cause}
          * @return This builder, for chaining
          */
-        Builder setShortDescription(Function<CommandSource, Optional<Text>> descriptionFunction);
+        Builder setShortDescription(Function<Cause, Optional<Text>> descriptionFunction);
 
         /**
          * Provides a simple description for this command, typically no more
@@ -345,7 +493,7 @@ public interface Command {
         default Builder setShortDescription(@Nullable Text description) {
             // Done outside the lambda so that we don't have to recreate the object each time.
             Optional<Text> text = Optional.ofNullable(description);
-            return setShortDescription(commandSource -> text);
+            return setShortDescription(cause -> text);
         }
 
         /**

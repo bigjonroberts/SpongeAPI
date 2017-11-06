@@ -24,6 +24,7 @@
  */
 package org.spongepowered.api.event.command;
 
+import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.event.Cancellable;
@@ -72,7 +73,7 @@ public interface CommandExecutionEvent extends Event {
 
     /**
      * Event that occurs when a command is requested, but before it has been
-     * executed.
+     * selected from the {@link CommandManager} and executed.
      */
     interface Pre extends CommandExecutionEvent, Cancellable {
 
@@ -110,6 +111,32 @@ public interface CommandExecutionEvent extends Event {
     }
 
     /**
+     * Event that occurs when a command is requested and a
+     * {@link CommandMapping} has been selected, but not yet executed.
+     */
+    interface Selected extends CommandExecutionEvent, Cancellable {
+
+        /**
+         * Gets the {@link CommandMapping} that has been selected to execute
+         * the command, if any was selected.
+         *
+         * @return The {@link CommandMapping}
+         */
+        Optional<CommandMapping> getCommandMapping();
+
+        // Overriden for Javadocs
+        /**
+         * Gets the result that will be returned to the original command caller
+         * if the event is cancelled.
+         *
+         * @return The result of the command, if set.
+         */
+        @Override
+        CommandResult getResult();
+
+    }
+
+    /**
      * Event the occurs once a command has completed execution.
      */
     interface Post extends CommandExecutionEvent {
@@ -120,7 +147,7 @@ public interface CommandExecutionEvent extends Event {
          *
          * @return The {@link CommandMapping}
          */
-        Optional<CommandMapping> getExecutedCommandMapping();
+        Optional<CommandMapping> getCommandMapping();
 
         /**
          * Gets the result that was originally returned by the command.

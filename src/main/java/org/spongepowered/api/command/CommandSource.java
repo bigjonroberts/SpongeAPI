@@ -31,10 +31,14 @@ import org.spongepowered.api.text.translation.locale.Locales;
 import java.util.Locale;
 
 /**
- * Something that can execute commands.
+ * Something that traditionally executes commands, can receive messages and
+ * can have permissions associated with them.
  *
  * <p>Examples of potential implementations include players, the server console,
  * Rcon clients, web-based clients, command blocks, and so on.</p>
+ *
+ * <p>Note that while command sources are typically associated with a command,
+ * they may not be the direct <em>cause</em> of a command invocation</p>
  */
 public interface CommandSource extends MessageReceiver, Subject {
 

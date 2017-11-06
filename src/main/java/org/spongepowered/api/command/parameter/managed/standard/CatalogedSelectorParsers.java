@@ -22,25 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command.parameter.managed;
+package org.spongepowered.api.command.parameter.managed.standard;
 
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.command.parameter.managed.SelectorParser;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 /**
- * Defines how a parameter should be parsed.
+ * Standard {@link SelectorParser}s
  */
-@FunctionalInterface
-public interface ValueUsage {
+public final class CatalogedSelectorParsers {
+
+    private CatalogedSelectorParsers() {}
+
+    // SORTFIELDS:ON
 
     /**
-     * Gets the usage string for the argument.
-     *
-     * @param key The {@link Text} that defines the parameter key
-     * @param cause The {@link Cause} requesting the usage
-     * @return The usage
+     * Returns a {@link SelectorParser} that will return anything that is of
+     * type {@link Entity}
      */
-    Text getUsage(Text key, Cause cause);
+    public final static CatalogedSelectorParser ENTITIES =
+            DummyObjectProvider.createFor(CatalogedSelectorParser.class, "ENTITIES");
 
+    /**
+     * Returns a {@link SelectorParser} that will ignore a selector
+     */
+    public final static CatalogedSelectorParser NONE =
+            DummyObjectProvider.createFor(CatalogedSelectorParser.class, "NONE");
+
+    /**
+     * Returns a {@link SelectorParser} that will return anything that is of
+     * type {@link Player}
+     */
+    public final static CatalogedSelectorParser PLAYERS =
+            DummyObjectProvider.createFor(CatalogedSelectorParser.class, "PLAYERS");
+
+    // SORTFIELDS:OFF
 }

@@ -30,6 +30,7 @@ import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.managed.ValueParameterModifier;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.util.ResettableBuilder;
 
 import java.util.Optional;
@@ -61,21 +62,6 @@ public class VariableValueParameterModifiers {
     }
 
     /**
-     * Creates a builder that can build a modifier that parses selectors, should
-     * one be passed to the parameter.
-     *
-     * <p>In-built parameter types where it makes sense to support selectors
-     * (such as {@link CatalogedValueParameters#PLAYER} do not need this
-     * modifier as they will already check selectors.
-     * </p>
-     *
-     * @return The builder
-     */
-    public static SelectorValueModifierBuilder selectorValueModifierBuilder() {
-        return Sponge.getRegistry().createBuilder(SelectorValueModifierBuilder.class);
-    }
-
-    /**
      * A builder that creates a {@link ValueParameterModifier} that supplies
      * a default value if the parameter in question fails to parse an argument.
      */
@@ -92,7 +78,7 @@ public class VariableValueParameterModifiers {
          *                             default value, if any
          * @return This builder, for chaining
          */
-        DefaultValueModifierBuilder setDefaultValueFunction(Function<CommandSource, Optional<?>> defaultValueFunction);
+        DefaultValueModifierBuilder setDefaultValueFunction(Function<Cause, Optional<?>> defaultValueFunction);
 
         /**
          * Builds this {@link ValueParameterModifier}.
@@ -126,68 +112,6 @@ public class VariableValueParameterModifiers {
          * @return The modifier
          * @throws IllegalStateException if the number of arguments to parse
          *                               has not been set
-         */
-        ValueParameterModifier build();
-
-    }
-
-    /**
-     * A builder that creates a {@link ValueParameterModifier} that will
-     * attempt to parse the argument as a selector if the element begins
-     * with an "@" symbol, and will take over all parsing in that scenario.
-     */
-    public interface SelectorValueModifierBuilder extends ResettableBuilder<ValueParameterModifier, SelectorValueModifierBuilder> {
-
-        /**
-         * Specifies that entities that are of the specified type can be
-         * returned by this selector
-         *
-         * @param entityType The class
-         * @return This builder, for chaining
-         */
-        SelectorValueModifierBuilder entityType(Class<? extends Entity> entityType);
-
-        /**
-         * Specifies that entities that are the specified {@link EntityType}
-         * can be returned by this selector
-         *
-         * @param entityType The {@link EntityType}
-         * @return This builder, for chaining
-         */
-        default SelectorValueModifierBuilder entityType(EntityType entityType) {
-            return entityType(entityType.getEntityClass());
-        }
-
-        /**
-         * Sets whether to throw an exception if more than one entity is
-         * returned by the selector.
-         *
-         * <p>If this is false, then developers <strong>must</strong> account for
-         * the fact that more than one entity can be returned.</p>
-         *
-         * @param expectOne Whether to expect only one entity to be
-         *                  returned
-         * @return This builder, for chaining
-         */
-        SelectorValueModifierBuilder setExpectOne(boolean expectOne);
-
-        /**
-         * If strict mode is enabled, if an entity that is not included
-         * this modifier (through the entityType methods), an exception
-         * is thrown. Otherwise, the nonconforming entities are just
-         * ignored and not returned.
-         *
-         * @param strict true to enable strict mode, false otherwise
-         * @return This builder, for chaining
-         */
-        SelectorValueModifierBuilder setStrict(boolean strict);
-
-        /**
-         * Builds this {@link ValueParameterModifier}.
-         *
-         * @return The modifier
-         * @throws IllegalStateException if the entity type has not been
-         *                               set
          */
         ValueParameterModifier build();
 

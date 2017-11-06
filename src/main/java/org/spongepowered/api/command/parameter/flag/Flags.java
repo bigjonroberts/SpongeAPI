@@ -30,6 +30,7 @@ import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ResettableBuilder;
 
@@ -45,10 +46,10 @@ import org.spongepowered.api.util.ResettableBuilder;
  * {@link Builder#setAnchorFlags(boolean)} is set to true, in which case, flags
  * can only be set at the beginning of an argument set.</p>
  */
-public interface Flags {
+public interface Flags extends Parameter {
 
     /**
-     * Gets a {@link Builder} to build up a flagset.
+     * Gets a {@link Builder} to build up a flag set.
      *
      * @return The {@link Builder}
      */
@@ -72,20 +73,20 @@ public interface Flags {
      *     for any long flag (like {@code --flag})</li>
      * </ul>
      *
-     * @param source The {@link CommandSource} that is running this command
+     * @param cause The {@link Cause} of the request
      * @param args The {@link CommandArgs}
      * @param context The {@link CommandContext}
      * @throws ArgumentParseException thrown if a flag could not be parsed
      */
-    void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException;
+    void parse(Cause cause, CommandArgs args, CommandContext context) throws ArgumentParseException;
 
     /**
      * Gets the usage for the flag potion of the command.
      *
-     * @param src The {@link CommandSource}
+     * @param cause The {@link Cause}
      * @return The usage
      */
-    Text getUsage(CommandSource src);
+    Text getUsage(Cause cause);
 
     /**
      * If true, flags will only be parsed at the beginning of the command.

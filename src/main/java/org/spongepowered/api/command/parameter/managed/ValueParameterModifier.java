@@ -29,6 +29,7 @@ import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.managed.standard.CatalogedValueParameterModifiers;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public interface ValueParameterModifier {
      * {@link CatalogedValueParameterModifiers#OPTIONAL_WEAK} does.</p>
      *
      * @param key The parameter key where the parsed value will be stored
-     * @param source The {@link CommandSource} executing the command
+     * @param cause The {@link Cause} of the command
      * @param args The arguments that need to be parsed
      * @param context The current context of the command, where parsed arguments
      *                will be stored
@@ -84,7 +85,7 @@ public interface ValueParameterModifier {
      * @throws ArgumentParseException thrown if there is an error parsing the
      *                                 argument
      */
-    void onParse(Text key, CommandSource source, CommandArgs args, CommandContext context, ParsingContext parsingContext)
+    void onParse(Text key, Cause cause, CommandArgs args, CommandContext context, ParsingContext parsingContext)
             throws ArgumentParseException;
 
     /**
@@ -94,7 +95,7 @@ public interface ValueParameterModifier {
      * provided completions. Modifiers will be called in their specified
      * order.</p>
      *
-     * @param source The {@link CommandSource} executing the command
+     * @param cause The {@link Cause} of the command
      * @param args The arguments that need to be parsed
      * @param context The current context of the command, where parsed arguments
      *                will be stored
@@ -103,7 +104,7 @@ public interface ValueParameterModifier {
      * @throws ArgumentParseException thrown if there is an error parsing the
      *                                 argument
      */
-    default List<String> complete(CommandSource source, CommandArgs args, CommandContext context, List<String> currentCompletions)
+    default List<String> complete(Cause cause, CommandArgs args, CommandContext context, List<String> currentCompletions)
             throws ArgumentParseException {
         return currentCompletions;
     }
@@ -119,12 +120,12 @@ public interface ValueParameterModifier {
      * <p>Return {@link Text#EMPTY} to suppress the display.</p>
      *
      * @param key The parameter key where the parsed value will be stored
-     * @param source The {@link CommandSource} executing the command
+     * @param cause The {@link Cause} of the command
      * @param currentUsage The usage, as provided by the {@link ValueParameter}
      *                     and earlier modifiers.
      * @return The usage {@link Text}.
      */
-    default Text getUsage(Text key, CommandSource source, Text currentUsage) {
+    default Text getUsage(Text key, Cause cause, Text currentUsage) {
         return currentUsage;
     }
 

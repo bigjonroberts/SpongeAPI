@@ -22,25 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.command.parameter.managed;
+package org.spongepowered.api.command.parameter.managed.standard;
 
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.command.parameter.managed.SelectorParser;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
-/**
- * Defines how a parameter should be parsed.
- */
-@FunctionalInterface
-public interface ValueUsage {
-
-    /**
-     * Gets the usage string for the argument.
-     *
-     * @param key The {@link Text} that defines the parameter key
-     * @param cause The {@link Cause} requesting the usage
-     * @return The usage
-     */
-    Text getUsage(Text key, Cause cause);
+@CatalogedBy(CatalogedSelectorParsers.class)
+public interface CatalogedSelectorParser extends CatalogType, SelectorParser {
 
 }

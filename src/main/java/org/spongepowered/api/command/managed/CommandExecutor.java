@@ -28,6 +28,7 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.event.cause.Cause;
 
 /**
  * Interface containing the method directing how a certain command will
@@ -39,12 +40,12 @@ public interface CommandExecutor {
     /**
      * Callback for the execution of a command.
      *
-     * @param source The {@link CommandSource} who is executing this command
+     * @param cause The {@link CommandSource} who is executing this command
      * @param context The parsed command arguments for this command
      * @return the result of executing this command
      * @throws CommandException If a user-facing error occurs while
      *     executing this command
      */
-    CommandResult execute(CommandSource source, CommandContext context) throws CommandException;
+    CommandResult execute(Cause cause, CommandContext context) throws CommandException;
 
 }

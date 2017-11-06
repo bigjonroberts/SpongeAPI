@@ -29,6 +29,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.token.CommandArgs;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.util.annotation.CatalogedBy;
 
 /**
@@ -47,7 +48,7 @@ public interface UnknownFlagBehavior extends CatalogType {
      * {@link CommandContext} in the state ready to parse the next
      * element.</p>
      *
-     * @param source The {@link CommandSource} that executed the command
+     * @param cause The {@link Cause} that requested the command
      * @param args The {@link CommandArgs}
      * @param context The {@link CommandContext}
      * @param tokenizedArgsPreviousState The previous {@link CommandArgs}
@@ -58,6 +59,6 @@ public interface UnknownFlagBehavior extends CatalogType {
      * @throws ArgumentParseException thrown if there is an issue parsing the
      *                                 argument
      */
-    void parse(CommandSource source, CommandArgs args, CommandContext context, CommandArgs.State tokenizedArgsPreviousState,
+    void parse(Cause cause, CommandArgs args, CommandContext context, CommandArgs.State tokenizedArgsPreviousState,
             CommandContext.State contextPreviousState, String flag) throws ArgumentParseException;
 }

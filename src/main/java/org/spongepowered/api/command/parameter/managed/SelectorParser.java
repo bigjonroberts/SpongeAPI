@@ -24,29 +24,42 @@
  */
 package org.spongepowered.api.command.parameter.managed;
 
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameter.ArgumentParseException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.token.CommandArgs;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.text.Text;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
- * Defines the completions for a parameter.
+ * Parses a selector
  */
 @FunctionalInterface
-public interface ValueCompleter {
+public interface SelectorParser {
 
     /**
-     * Gets valid completions for a command.
+     * Attempts to parse a selector, which is defined as a string starting with
+     * the character "@".
      *
-     * @param cause The {@link Cause} that requested command completion
-     * @param args The {@link CommandArgs} that contains the unparsed arguments
-     * @param context The {@link CommandContext} that contains the parsed arguments
-     * @return The {@link List} of completions to display to the client
-     * @throws ArgumentParseException if a parameter could not be parsed
+     * <p>If a value is returned, then the associated {@link ValueParser} will
+     * not be executed, and the result will be added to the
+     * {@link CommandContext} like normal. If there is an error in parsing a
+     * selector, the implementation is strongly advised to throw an
+     * {@link ArgumentParseException}, as returning {@link Optional#empty()}
+     * will cause the associated {@link ValueParser} to attempt to parse the
+     * selector.</p>
+     *
+     * @param cause The {@link Cause}
+     * @param selector The selector, which will include the "@" symbol
+     * @param context The {@link CommandContext}
+     * @param errorFunction A {@link Function} that produces an
+     *      {@link ArgumentParseException} from an error message
+     *
+     * @return An {@link Optional} returning the result, or
+     *      {@link Optional#empty()} if a selector should not be parsed.
+     * @throws ArgumentParseException if the selector could not be parsed
      */
-    List<String> complete(Cause cause, CommandArgs args, CommandContext context) throws ArgumentParseException;
-
+    Optional<?> parseSelector(Cause cause, String selector, CommandContext context, Function<Text, ArgumentParseException> errorFunction)
+            throws ArgumentParseException;
 }
